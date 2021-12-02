@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <title>FARM MONITORING</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" href="assets/css/fontawesome.css">
+    <link rel="stylesheet" href="assets/css/template.css">
+    <link rel="stylesheet" href="assets/css/animated.css">
+    <link rel="stylesheet" href="assets/css/owl.css">
+  </head>
+
+<body>
+
+  <!-- ***** Preloader Start ***** -->
+  <div id="js-preloader" class="js-preloader">
+    <div class="preloader-inner">
+      <span class="dot"></span>
+      <div class="dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+  <!-- ***** Preloader End ***** -->
+
+  <!-- ***** Header Area Start ***** -->
+  <header class="header-area header-sticky wow slideInDown" data-wow-duration="1s" data-wow-delay="0s">
+    <div class="container" style="padding-top: 10px;">
+      <div class="row">
+        <div class="col-12">
+          <nav class="main-nav">
+            <!-- ***** Logo Start ***** -->
+            <a href="#" class="logo">
+              <h4>Dashboard</h4> &emsp;<img src="assets/images/logo-icon.png" style="width: 70px;" alt="">
+            </a>
+            <!-- ***** Logo End ***** -->
+          </nav>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- ***** Header Area End ***** -->
+  <div id="contact" class="contact-us section" style="padding-top: 20px;">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12 wow fadeInUp" data-wow-duration="0.5s" data-wow-delay="0.25s">
+          <form id="contact">
+            <div class="row">
+              <div class="col-lg-6 offset-lg-3">
+                <div class="section-heading">
+                  
+                  <h2>Present  <span>condition</span> of your<em> Farm</em></h2>
+                </div>
+              </div>
+                  <div class="col-lg-12">
+                    <div class="row">
+                            <div class="col-lg-4">
+                            <div class="contact-info">
+                            <div id="chart-container-1"><img src="assets/images/tempscale.gif" style="height: 100px; width: auto;"></div>
+                            <!--PRINT TEMPERATURE IN SPAN BELOW, FIREBASE:temp -->
+                            <h2 style="font-weight: bold; color: aquamarine;">Temperature: <br><span id='print-temp'></span><sup>o</sup>C</h2><br>
+                            </div></div>
+                            <div class="col-lg-4">
+                            <div class="contact-info">
+                            <div id="chart-container-2"><img src="assets/images/humid.gif" style="height: 100px; width: auto;"></div>
+                            <!--PRINT HUMIDITY IN SPAN BELOW, FIREBASE: humid-->
+                            <h2 style="font-weight: bold; color: aquamarine;">Humidity: <br><span id='print-humidity'></span>%</h2><br>
+                            </div></div>
+                            <div class="col-lg-4">
+                            <div class="contact-info"> 
+                            <div id="chart-container-3"><img src="assets/images/Tank-level.gif" style="height: 100px; width: auto;"></div>
+                            <!--PRINT WATER LEVEL IN SPAN BELOW, FIREBASE: level-->                          
+                            <h2 style="font-weight: bold; color: aquamarine;">Water-Level: <br><span id='print-water-level'></span> cm</h2><br>
+                            </div></div>
+                      </div>
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <button type="button" id="motor-on">On Motor</button>&emsp;
+                          <button type="button" id="motor-off">Off Motor</button>&emsp;
+                          <button type="button" id="motor-reverse">Remove Water</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <p style="text-align: center;">Current Motor Status: <span id="motor-status"></span></p>
+                      </div>
+                  </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form><br>
+        </div>
+      </div>
+    </div>
+  <!-- Scripts -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/owl-carousel.js"></script>
+  <script src="assets/js/animation.js"></script>
+  <script src="assets/js/imagesloaded.js"></script>
+  <script src="assets/js/custom.js"></script>
+
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.4.1/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBBUvbQTsztDFwbiNY-ZexeS5aXcPyri58",
+      authDomain: "webd-cbf4e.firebaseapp.com",
+      projectId: "webd-cbf4e",
+      storageBucket: "webd-cbf4e.appspot.com",
+      messagingSenderId: "860771173348",
+      appId: "1:860771173348:web:4a52437424bab4e4c8bdf1"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    //const analytics = getAnalytics(app);
+    import { getDatabase, ref, get, set, child, update, remove, onValue }
+      from "https://www.gstatic.com/firebasejs/9.4.1/firebase-database.js";
+    const db = getDatabase();
+     
+    console.log("firebase");
+    const distanceRef = ref(db, );
+    onValue(distanceRef, (snapshot) => {
+      const level = snapshot.val().level;
+      const temp = snapshot.val().temp;
+      const humid = snapshot.val().humid;
+      updateValue(level,temp,humid);
+    })
+
+    function updateValue(level ,temp , humid ) {
+      document.getElementById('print-water-level').innerHTML = level;
+      console.log("level : " + level);
+
+      document.getElementById('print-temp').innerHTML = temp;
+      console.log("temp : " + temp);
+
+      document.getElementById('print-humidity').innerHTML = humid;
+      console.log("humid : " + humid);
+      }
+   
+      
+      onValue(ref(db , ) ,(snapshot) =>{
+        const in1 = snapshot.val().in;
+        updateStatus(in1);
+      })
+
+      function updateStatus(in1){
+        console.log("in1: " +in1);
+        if (in1==1){
+          document.getElementById('motor-status').innerHTML = "on";
+        }
+        else if(in1 ==0){
+          document.getElementById('motor-status').innerHTML = "off";
+        }
+        else if (in1==-1){
+          document.getElementById('motor-status').innerHTML = "reverse";
+        }
+        // else{
+        //   alert("An error occured!");
+        // }
+      }
+
+  function send1(){
+    update(ref(db,),  {
+      in: 1,
+    }).then(() =>{
+      alert("Successfully Changed");
+    }).catch((error) => {
+      alert("Unsuccessful, error: " + error);
+    })
+  }
+  var startbtn = document.getElementById('motor-on');
+  startbtn.addEventListener('click',send1);
+
+  function send0(){
+    update(ref(db,),  {
+      in: 0,
+    }).then(() =>{
+      alert("Successfully Changed");
+    }).catch((error) => {
+      alert("Unsuccessful, error: " + error);
+    })
+  }
+  var stopbtn = document.getElementById('motor-off');
+  stopbtn.addEventListener('click',send0);
+
+  function send10(){
+    update(ref(db,),  {
+      in: -1,
+    }).then(() =>{
+      alert("Successfully Changed");
+    }).catch((error) => {
+      alert("Unsuccessful, error: " + error);
+    })
+  }
+  var revbtn = document.getElementById('motor-reverse');
+  revbtn.addEventListener('click',send10);
+
+  </script>
+
+  <!--IGNORE THE BELOW COMMENTED PART BUT DON'T DELETE-->
+  <!--ANIMATIONS-->
+  <!--
+  <script src="https://cdn.fusioncharts.com/fusioncharts/latest/themes/fusioncharts.theme.fusion.js"></script>
+  <script src="https://cdn.fusioncharts.com/fusioncharts/latest/fusioncharts.js"></script>
+  <script>
+  const dataSource = {
+  
+  chart: {
+    caption: "Temperature",
+    lowerlimit: "-20",
+    upperlimit: "80",
+    numbersuffix: "°C",
+    thmfillcolor: "#008ee4",
+    showgaugeborder: "1",
+    gaugebordercolor: "#008ee4",
+    gaugeborderthickness: "2",
+    plottooltext: "Temperature: <b>$datavalue</b> ",
+    theme: "fusion",
+    showvalue: "1"
+  },
+  value: "20"
+};
+
+FusionCharts.ready(function() {
+  var myChart0 = new FusionCharts({
+    type: "thermometer",
+    renderAt: "chart-container-1",
+    width: "70%",
+    height: "70%",
+    dataFormat: "json",
+    dataSource
+  }).render();
+});
+
+  </script>
+  <script>
+  const dataSource = {
+  chart: {
+    caption: "Water",
+    lowerlimit: "0",
+    upperlimit: "40",
+    lowerlimitdisplay: "Empty",
+    upperlimitdisplay: "Full",
+    numbersuffix: "ltrs",
+    cylfillcolor: "#5D62B5",
+    plottooltext: "Water Level: <b>20 ltrs</b>",
+    cylfillhoveralpha: "85",
+    theme: "fusion"
+  },
+  value: "20"
+};
+
+FusionCharts.ready(function() {
+  var myChart1 = new FusionCharts({
+    type: "cylinder",
+    renderAt: "chart-container-2",
+    width: "70%",
+    height: "70%",
+    dataFormat: "json",
+    dataSource
+  }).render();
+});
+  </script>
+  <script>
+  const dataSource = {
+    chart: {
+      caption: "Humidity",
+      upperlimit: "200",
+      numbersuffix: " db",
+      showvalue: "0",
+      chartbottommargin: "50",
+      ledgap: "1",
+      theme: "fusion"
+    },
+    colorrange: {
+      color: [
+        {
+          minvalue: "100",
+          maxvalue: "150",
+          code: "#80dfff"
+        },
+        {
+          minvalue: "150",
+          maxvalue: "180",
+          code: "#ff944d"
+        },
+        {
+          minvalue: "180",
+          maxvalue: "200",
+          code: "#ff3300"
+        }
+      ]
+    },
+    value: "125"
+  };
+  
+  FusionCharts.ready(function() {
+    var myChart2 = new FusionCharts({
+      type: "vled",
+      renderAt: "chart-container-3",
+      width: "100%",
+      height: "100%",
+      dataFormat: "json",
+      dataSource
+    }).render();
+  });
+</script>  
+-->
+  
+</body>
+</html>
