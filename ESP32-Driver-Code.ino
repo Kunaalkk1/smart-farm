@@ -47,7 +47,7 @@ void loop() {
   digitalWrite(trigpin, LOW);
   float duration = pulseIn(echopin, HIGH);
   float distance = (0.017 * duration);
-  float l=30-distance;
+  float l=25-distance;
   Serial.print("Water Level:");
   Serial.println(l);
   float h = dht.readHumidity()/2;
